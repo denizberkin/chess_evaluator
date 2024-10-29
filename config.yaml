@@ -1,0 +1,33 @@
+training:
+  batch_size: 32
+  epochs: 10
+  lr: 1.e-3
+  # TODO: add params as you write the pipeline
+
+model:
+  input_shape: [5, 8, 8]
+  output_shape: 1  # probability of winning for now
+
+data:
+  folder: data
+  num_samples: 1000  # for now as testing purposes
+
+game:
+  board_size: 8
+  piece_encodings:
+    # 0 for empty square
+    P: 1
+    N: 2
+    B: 3
+    R: 4
+    Q: 5
+    K: 6
+    # 7 for castling
+    p: 8
+    n: 9
+    b: 10
+    r: 11
+    q: 12
+    k: 13
+    # 14 for castling
+    # 15 for en-passant
