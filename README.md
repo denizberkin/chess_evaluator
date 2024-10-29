@@ -40,4 +40,4 @@ where M=14, L=7 resulting T=8, T sets of M planes with L extra state with T step
 
 <p Align="center"> <img src="assets/alphazero_outputstate.png"> </p>
 
-- TODO: check page 14: **Configuration** paragraph.
+- TODO: check page 14: **Configuration** paragraph. -> mentions MCTS params, Dirichlet noise, lr and other hyper-params and stats.
