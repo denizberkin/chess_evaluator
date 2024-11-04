@@ -1,5 +1,8 @@
 __pycache__
 data/*
+processed/*
+models/*
 
+*.npz
 *.pt
 *.pth
