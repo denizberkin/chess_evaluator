@@ -15,8 +15,7 @@ class BoardState:
     def __init__(self, board: chess.Board=None) -> Self:
         self.board = board if board is not None else chess.Board()
         
-    # gotta format board into a numpy array
-    def board2np(self):
+    def board2np(self) -> np.ndarray:
         if not self.board.is_valid():
             raise ValueError("Invalid board state")
         
@@ -50,4 +49,4 @@ class BoardState:
         
         # END
         
-        return current_board
+        return current_board  # 5, 8, 8 np array
