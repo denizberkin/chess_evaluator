@@ -9,6 +9,9 @@ from typing import *
 import numpy as np
 import chess
 import chess.pgn as pgn
+from tqdm import tqdm
+
+from serialize import BoardState
 
 
 # score from white's perspective
@@ -40,7 +43,8 @@ def configure_dataset(games: List[pgn.Game],
                       limit=None
                       ) -> Tuple[np.ndarray, np.ndarray]:
     """ 
-    dataset for train, val, test
+    dataset generation for train, val, test
+    Q: Should I use yield as this may get heavy with a large set?
     Returns: 
         - X: list of board states
         - y: list of scores
@@ -48,7 +52,7 @@ def configure_dataset(games: List[pgn.Game],
     X, Y = [], []
     num_samples = 0
     
-    for game in games:
+    for game in tqdm(games):
         result = game.headers["Result"] if "Result" in game.headers else None
         if result not in RESULTS:
             continue  # skip game if result is broken somehow
@@ -57,12 +61,10 @@ def configure_dataset(games: List[pgn.Game],
         board = chess.Board()
         
         for move in game.mainline_moves():
+            # unfortunately, even the bad moves of the winning side are appointed as positive
             board.push(move)
-            # board2np here
-            # TODO: append to X
-
-            # unfortunately, even the bad moves of the winning side 
-            # are appointed as positive
+            x = BoardState(board).board2np()
+            X.append(x)
             Y.append(y)
             
             if limit is not None and len(Y) >= limit:
@@ -75,17 +77,11 @@ def configure_dataset(games: List[pgn.Game],
 
 
 if __name__ == "__main__":
-    fn = "data/one_game.pgn"
-    games = read_games_from_pgn(fn)  # each % 2 is metadata, game pair
-    for game in games:
-        print([(k, v) for k, v in game.headers.items()])  # either -> "1-0", "0-1", "1/2-1/2"
+    fn = "data/Nakamura.pgn"
+    games = read_games_from_pgn(fn)
     
-    board = chess.Board()  # o(n)
-    # print main moves of the game w/format
-    for i, move in enumerate(game.mainline_moves()):
-        board.push(move)
-        print(f"State {i}.\n{board}")
-        # print each state, kind of prettified
+    X, Y = configure_dataset(games)
     
+    np.savez("processed/Nakamura.npz", X=X, Y=Y)
     
     
