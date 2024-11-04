@@ -3,6 +3,8 @@ data/*
 processed/*
 models/*
 
+*.log
+
 *.npz
 *.pt
 *.pth

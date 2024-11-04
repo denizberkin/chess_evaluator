@@ -5,6 +5,7 @@ read a pgn file and print game
 
 import os
 from typing import *
+import logging
 
 import numpy as np
 import chess
@@ -13,6 +14,10 @@ from tqdm import tqdm
 
 from serialize import BoardState
 
+
+# Configure logging
+logging.basicConfig(filename='game_processing.log', level=logging.INFO, 
+                    format='%(asctime)s - %(levelname)s - %(message)s')
 
 # score from white's perspective
 RESULTS = {
@@ -25,17 +30,27 @@ RESULTS = {
 def read_games_from_pgn(fn: str) -> List[pgn.Game]:
     """ pgn.read_game reads one game per call!"""
     games = []
+    file_size = os.path.getsize(fn)
     pgn_bytes = open(fn)
-    while True:
-        try:
-            game = pgn.read_game(pgn_bytes)
-            if game is None:
-                break  # EOF
-        except Exception as e:
-            print(e)  # some error with file?
-            break
-        games.append(game)
     
+    with open(fn) as pgn_bytes:
+        pbar = tqdm(total=file_size, desc="Reading game file", unit="byte")
+        game = pgn.read_game(pgn_bytes)
+        while game is not None:
+            try:
+                logging.DEBUG(f"Loaded game: {game.headers["White"]} vs {game.headers["Black"]}")
+                games.append(game)
+            except Exception as e:
+                logging.error(f"Error reading game: {e}")
+                break
+            
+            # update pbar
+            pbar.update(pgn_bytes.tell() - pbar.n)
+            game = pgn.read_game(pgn_bytes)
+            
+        pbar.close()
+    
+    logging.info(f"Loaded {len(games)} games from {fn}\n")
     return games
 
 
@@ -52,9 +67,10 @@ def configure_dataset(games: List[pgn.Game],
     X, Y = [], []
     num_samples = 0
     
-    for game in tqdm(games):
+    for game in tqdm(games, desc="Processing games", unit="game"):
         result = game.headers["Result"] if "Result" in game.headers else None
         if result not in RESULTS:
+            logging.warning(f"Skipping game due to invalid result: {game.headers}")
             continue  # skip game if result is broken somehow
         
         y = RESULTS[result]  # score from white's perspective
@@ -68,6 +84,7 @@ def configure_dataset(games: List[pgn.Game],
             Y.append(y)
             
             if limit is not None and len(Y) >= limit:
+                logging.info(f"Reached limit of {limit} samples, stopping!")
                 return np.array(X), np.array(Y)
             
             num_samples += 1
