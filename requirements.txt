@@ -1,3 +1,5 @@
 chess==1.11.1
 torch==2.5.0
 numpy==2.1.2
+omegaconf==2.3.0
+tqdm==4.66.6
