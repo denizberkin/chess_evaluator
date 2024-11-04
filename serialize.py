@@ -37,10 +37,17 @@ class BoardState:
         if self.board.ep_square is not None:
             current_board[self.board.ep_square] = 15
             
-        # TODO: current_board to binary (5,8,8) np.ndarray
-        # need to use binary ops, for loop too slow
-        binary_board = np.zeros((5, 8, 8), dtype=np.int8)  # see readme for shape explanation
-        # XXX: 
+        # XXX: change this block in case I want to implement a different representation, 
+        # one hot for different pieces might be the case as alpha zero does use a similar implementation
         
+        binary_board = np.zeros((5, 8, 8), dtype=np.int8)  # see readme for shape explanation
+        
+        # need to reshape the current board to 8x8 before applying binary ops
+        current_board = current_board.reshape(8, 8)
+        for i in range(4):
+            binary_board[i] = (current_board >> i) & 1  # shift right i times, then bitwise AND
+        binary_board[4] = (self.board.turn * 1.0) # 1.0 for white, 0.0 for black
+        
+        # END
         
         return current_board
