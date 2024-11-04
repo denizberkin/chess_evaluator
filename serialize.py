@@ -48,5 +48,4 @@ class BoardState:
         binary_board[4] = (self.board.turn * 1.0) # 1.0 for white, 0.0 for black
         
         # END
-        
         return current_board  # 5, 8, 8 np array
