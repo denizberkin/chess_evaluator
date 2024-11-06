@@ -77,8 +77,12 @@ if __name__ == "__main__":
     # we can also use https://www.ficsgames.org/download.html to download games which can filter to time, player, gamemode etc. 
     # but i currently did not write a script for that.
     dest = "data"
-    fn = "pgn_files.csv"
-    # filenames_dict = get_filenames_pgnmentor()
-    # save_to_csv(filenames_dict, dest, fn=fn)
+    fn = "pgnmentor_player_pgns.csv"
     
-    download_pgns_from_csv(os.path.join(dest, fn), dest)
+    # to create your csv, you can pass this if you want -> pgnmentor_player_pgns.csv is available
+    filenames_dict = get_filenames_pgnmentor()
+    save_to_csv(filenames_dict, dest, fn=fn)
+    
+    # to download games from csv to dest
+    csv_fn = "data/pgnmentor_player_pgns.csv"
+    download_pgns_from_csv(csv_fn, dest)
