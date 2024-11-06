@@ -4,6 +4,7 @@ processed/*
 models/*
 
 *.log
+*.pgn
 
 *.npz
 *.pt
