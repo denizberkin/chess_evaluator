@@ -1,7 +1,14 @@
 # chess_evaluator
 evaluating chess games via DNNs?
 
-### Step 0: took data from [Lichess Database](https://database.lichess.org/#standard_games)
+
+
+### Step 0: took data from [Lichess Database](https://database.lichess.org/#standard_games),
+
+### <em>Useful scripts (i hope) </em>
+- [Functions to download and extract games to PGNs](utils/download_games.py)
+- [Functions to read and process from PGNs](utils/read_games.py)
+
 
 ### Step 1: read a pgn file, learn about fen notation: mostly done
 
