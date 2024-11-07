@@ -12,7 +12,7 @@ import chess
 import chess.pgn as pgn
 from tqdm import tqdm
 
-from serialize import BoardState
+from utils.serialize import BoardState
 
 
 # Configure logging
@@ -27,8 +27,20 @@ RESULTS = {
 }
 
 
+def read_games_from_folder(folder: str) -> List[pgn.Game]:
+    """ Read all PGNs from a folder """
+    games = []
+    for fn in os.listdir(folder):
+        if fn.endswith(".pgn"):
+            file_path = os.path.join(folder, fn)
+            print(file_path)
+            games.extend(read_games_from_pgn(file_path)) # extend to all games
+    return games
+
+
 def read_games_from_pgn(fn: str) -> List[pgn.Game]:
-    """ pgn.read_game reads one game per call!"""
+    """ ??? """
+    # FIXME: idk what happened, stopped working, will check?
     games = []
     file_size = os.path.getsize(fn)
     pgn_bytes = open(fn)
@@ -92,13 +104,15 @@ def configure_dataset(games: List[pgn.Game],
     return np.array(X), np.array(Y)
             
 
-
 if __name__ == "__main__":
+    folder = "data"
     fn = "data/Nakamura.pgn"
-    games = read_games_from_pgn(fn)
+    
+    games = read_games_from_pgn(fn)  # this is only for one pgn, for folder
+    # games = read_games_from_folder(folder)
     
     X, Y = configure_dataset(games)
     
-    np.savez("processed/Nakamura.npz", X=X, Y=Y)
+    np.savez("processed/pgnmentor.npz", X=X, Y=Y)
     
     
